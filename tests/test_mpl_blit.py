@@ -3,7 +3,86 @@ import numpy as np
 import matplotlib.pyplot as plt 
 from mpl_blit.animator import Animator
 
-# @unittest.skip("test passed")
+
+class TestMPLfig2lf(unittest.TestCase):
+    # make a new figure
+    def setUp(self):
+        self.fig, self.ax = plt.subplots()
+        self.ax.set_xlim(-10, 10)
+        self.ax.set_ylim(-10, 10)
+        Animator.init_figure()
+        self.fig2, self.ax2 = plt.subplots()
+        self.ax2.set_xlim(-10, 10)
+        self.ax2.set_ylim(-10, 10)
+        Animator.init_figure()
+
+    def test_sine_wave_frame_ann(self):
+        x = np.linspace(0, 2 * np.pi, 1000)
+
+        # create a line2D artist
+        (ln1,) = self.ax.plot([], [], animated=True, label="sine")
+        (ln2,) = self.ax2.plot([], [], animated=True, label="cos")
+
+        # create annotation artist 
+        fr_number1 = self.ax.annotate(
+            "0",
+            (0, 1),
+            xycoords="data",
+            xytext=(0.15, 0.92),
+            textcoords="figure fraction",
+            ha="left",
+            va="top",
+            animated=True,
+        )
+        fr_number2 = self.ax2.annotate(
+            "0",
+            (0, 1),
+            xycoords="data",
+            xytext=(0.15, 0.92),
+            textcoords="figure fraction",
+            ha="left",
+            va="top",
+            animated=True,
+        )
+
+        self.ax.set_xlim(min(x), max(x))
+        self.ax.set_ylim(min(np.sin(x)), max(np.sin(x)))
+        # add a legend, using either method
+        # lg = ax.legend([ln], ["sine"], loc='upper center', bbox_to_anchor=(0.5, 1.10))
+        self.ax.legend(loc='upper center',bbox_to_anchor=(0.5, 1.10))
+        self.ax2.set_xlim(min(x), max(x))
+        self.ax2.set_ylim(min(np.cos(x)), max(np.cos(x)))
+        # add a legend, using either method
+        # lg = ax.legend([ln], ["sine"], loc='upper center', bbox_to_anchor=(0.5, 1.10))
+        self.ax2.legend(loc='upper center',bbox_to_anchor=(0.5, 1.10))
+
+        Animator.add_artist(ln1, "line_artist", fig_num=1)
+        Animator.add_artist(fr_number1, "frame_artist", fig_num=1)
+
+        Animator.add_artist(ln2, "line_artist", fig_num=2)
+        Animator.add_artist(fr_number2, "frame_artist", fig_num=2)
+        
+        ln1 = Animator.get_artist("line_artist", fig_num=1)
+        ln2 = Animator.get_artist("line_artist", fig_num=2)
+        ln1.set_xdata(x)
+        ln2.set_xdata(x)
+        for j in range(1000):
+            # update the artists
+            # first line
+            fr_number1.set_text("frame: {j}".format(j=j))
+            ln1.set_ydata(np.sin(x + (j / 100) * np.pi))
+            # second line
+            fr_number2.set_text("frame: {j}".format(j=j))
+            ln2.set_ydata(np.cos(x + (j / 100) * np.pi))
+            # tell the blitting manager to do it's thing
+            Animator.update(1)
+            Animator.update(2)
+
+
+    def tearDown(self):
+        Animator.close()
+
+@unittest.skip("test passed")
 class TestMplBlit(unittest.TestCase):
 
     def setUp(self):

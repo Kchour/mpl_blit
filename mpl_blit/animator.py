@@ -89,7 +89,7 @@ class Animator:
             del cls.instances[fig_num].artists[artist_name]
 
     @classmethod
-    def init_figure(cls, figure_number: int=None, figure_name: str=""):
+    def init_figure(cls, fig_num: int=None, fig_name: str=""):
         """Store reference to figure axes and and fig object via Animator object
 
         Args:
@@ -105,8 +105,8 @@ class Animator:
 
         # Crete an Animator instance for each fig number. Fig name is optional
         # if fig num is not specified, then get number for current fig
-        _fig_num = cls.get_fig_num(figure_number)
-        o = Animator(_fig_num, figure_name)
+        _fig_num = cls.get_fig_num(fig_num)
+        o = Animator(_fig_num, fig_name)
         cls.instances[_fig_num] = o
 
     @staticmethod
@@ -121,7 +121,7 @@ class Animator:
             return figure_number
 
     @classmethod
-    def add_artist(cls, artist, artist_name: str, figure_number: int=None):
+    def add_artist(cls, artist, artist_name: str, fig_num: int=None):
         """Add an artist primitive object to Animator class
 
         first create artist externally using matplotlib, then 
@@ -129,19 +129,19 @@ class Animator:
         a unique string name!
 
         """
-        _fig_num = cls.get_fig_num(figure_number)
+        _fig_num = cls.get_fig_num(fig_num)
         if artist_name not in cls.instances[_fig_num].artists:
             artist.set_animated(True)
             cls.instances[_fig_num]._add_artists(artist, artist_name)
 
     @classmethod
-    def update(cls, figure_number: int=None, pause_time:float=0):
+    def update(cls, fig_num: int=None, pause_time:float=0):
         """Render all artist changes to screen
         
         Call this function after making changes to a frame.
 
         """
-        _fig_num = cls.get_fig_num(figure_number)
+        _fig_num = cls.get_fig_num(fig_num)
         fig = plt.figure(_fig_num)
         ax = fig.axes[0]
 
